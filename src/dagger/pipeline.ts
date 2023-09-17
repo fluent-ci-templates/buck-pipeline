@@ -1,7 +1,7 @@
 import Client, { connect, uploadContext } from "@fluentci.io/dagger";
 import * as jobs from "./jobs.ts";
 
-const { build, test, runnableJobs, exclude } = jobs;
+const { build, runnableJobs, exclude } = jobs;
 
 export default async function pipeline(src = ".", args: string[] = []) {
   if (Deno.env.has("FLUENTCI_SESSION_ID")) {
