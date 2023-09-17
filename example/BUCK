@@ -1,0 +1,6 @@
+rust_binary(
+    name = "example",
+    srcs = glob(
+        ["src/**/*.rs"],
+    ),
+)
