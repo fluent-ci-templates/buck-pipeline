@@ -1,0 +1,7 @@
+load("//:rules.bzl", "rust_binary")
+
+rust_binary(
+    name = "example",
+    file = "src/main.rs",
+    toolchain = "toolchains//:rust",
+)
