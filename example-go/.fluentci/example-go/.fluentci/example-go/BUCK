@@ -1,0 +1,15 @@
+# A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
+load("//:rules.bzl", "go_binary")
+
+go_binary(
+    name = "hello",
+    srcs = glob(["*.go"]),
+    toolchain = "toolchains//:go",
+    deps = [],
+)
+
+genrule(
+    name = "hello_world",
+    out = "out.txt",
+    cmd = "echo BUILT BY BUCK2> $OUT",
+)
