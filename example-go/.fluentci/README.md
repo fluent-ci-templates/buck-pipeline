@@ -11,10 +11,10 @@ A ready-to-use Pipeline for [Buck](https://buck2.build/) projects.
 Run the following command in your project:
 
 ```bash
-dagger run fluentci buck_pipeline
+fluentci run buck_pipeline
 ```
 
-Or, if you want to use it as a template:
+Or, if you want to use it as a template :
 
 ```bash
 fluentci init -t buck
@@ -37,18 +37,11 @@ dagger run fluentci .
 
 ## Programmatic usage
 
-You can also use this pipeline programmatically:
+You can also use this pipeline programmatically :
 
 ```ts
-import Client, { connect } from "https://sdk.fluentci.io/v0.1.7/mod.ts";
-import { test, build } from "https://pkg.fluentci.io/buck_pipeline@v0.1.0/mod.ts";
+import { test, build } from "https://pkg.fluentci.io/buck_pipeline@v0.2.0/mod.ts";
 
-function pipeline(src = ".") {
-  connect(async (client: Client) => {
-    await test(client, src);
-    await build(client, src);
-  });
-}
-
-pipeline();
+await test();
+await build();
 ```

@@ -1,0 +1,6 @@
+[submodule "example/prelude"]
+	path = example/prelude
+	url = https://github.com/facebook/buck2-prelude.git
+[submodule "example-go/prelude"]
+	path = example-go/prelude
+	url = https://github.com/facebook/buck2-prelude.git
