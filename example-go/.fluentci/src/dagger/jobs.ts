@@ -13,7 +13,7 @@ export const build = async (src = ".") => {
     const ctr = client
       .pipeline(Job.build)
       .container()
-      .from("pkgxdev/pkgx:latest")
+      .from("ghcr.io/fluentci-io/pkgx:latest")
       .withExec(["pkgx", "install", "zstd", "wget"])
       .withExec([
         "wget",
@@ -47,7 +47,7 @@ export const test = async (src = ".") => {
     const ctr = client
       .pipeline(Job.test)
       .container()
-      .from("pkgxdev/pkgx:latest")
+      .from("ghcr.io/fluentci-io/pkgx:latest")
       .withExec(["pkgx", "install", "zstd", "wget"])
       .withExec([
         "wget",
