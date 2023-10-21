@@ -63,7 +63,7 @@ export const test = async (src = ".") => {
       .withMountedCache("/app/buck-out", client.cacheVolume("buck-cache"))
       .withDirectory("/app", context, { exclude })
       .withWorkdir("/app")
-      .withExec(["buck", "test", "//..."])
+      .withExec(["buck2", "test", "//..."])
       .withExec(["ls", "-la"]);
 
     const result = await ctr.stdout();
