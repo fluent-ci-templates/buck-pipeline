@@ -1,3 +1,8 @@
+/**
+ * @module buck
+ * @description This module provides a set of functions to run common tasks with Buck.
+ */
+
 import { dag, type Directory } from "../../deps.ts";
 import { getDirectory } from "./lib.ts";
 
@@ -8,9 +13,15 @@ export enum Job {
 
 export const exclude = [".fluentci", ".git", "target", "buck-out"];
 
-export const build = async (
+/**
+ * @function
+ * @description Build the project
+ * @param {string | Directory} src
+ * @returns  {string}
+ */
+export async function build(
   src: string | Directory | undefined = "."
-): Promise<string> => {
+): Promise<string> {
   const context = await getDirectory(src);
   const ctr = dag
     .pipeline(Job.build)
@@ -28,6 +39,7 @@ export const build = async (
     .withMountedCache("/app/buck-out", dag.cacheVolume("buck-cache"))
     .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
+    .withExec(["buck2", "--version"])
     .withExec(["buck2", "build", "//...", "--show-output", "--verbose", "4"])
     .withExec(["ls", "-la"]);
   const [stdout, stderr] = await Promise.all([ctr.stdout(), ctr.stderr()]);
@@ -36,11 +48,17 @@ export const build = async (
   console.error(stderr);
 
   return stdout + "\n" + stderr;
-};
+}
 
-export const test = async (
+/**
+ * @function
+ * @description Run tests
+ * @param {string | Directory} src
+ * @returns {string}
+ */
+export async function test(
   src: string | Directory | undefined = "."
-): Promise<string> => {
+): Promise<string> {
   const context = await getDirectory(src);
   const ctr = dag
     .pipeline(Job.test)
@@ -58,6 +76,7 @@ export const test = async (
     .withMountedCache("/app/buck-out", dag.cacheVolume("buck-cache"))
     .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
+    .withExec(["buck2", "--version"])
     .withExec(["buck", "test", "//..."])
     .withExec(["ls", "-la"]);
 
@@ -67,7 +86,7 @@ export const test = async (
   console.error(stderr);
 
   return stdout + "\n" + stderr;
-};
+}
 
 export type JobExec = (src: string | Directory | undefined) => Promise<string>;
 

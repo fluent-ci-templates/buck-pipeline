@@ -22,7 +22,7 @@ jobs:
             coverage
       - name: Run Dagger Pipelines
         run: |
-          dagger -m github.com/fluent-ci-templates/deno-pipeline@main functions
+          dagger -m github.com/fluent-ci-templates/buck-pipeline@main functions
       - name: Upload to Codecov
         run: fluentci run --wasm codecov upload
         env:
