@@ -42,7 +42,6 @@ Call functions from the module:
 dagger call -m github.com/fluent-ci-templates/buck-pipeline@main build --src .
 ```
 
-
 ## Jobs
 
 | Job       | Description   |
