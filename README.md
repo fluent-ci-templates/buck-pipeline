@@ -28,6 +28,21 @@ Now you can run the pipeline with:
 fluentci run .
 ```
 
+## 🧩 Dagger Module
+
+Use as a [Dagger](https://dagger.io) module:
+
+```bash
+dagger install github.com/fluent-ci-templates/buck-pipeline@main
+```
+
+Call functions from the module:
+
+```bash
+dagger call -m github.com/fluent-ci-templates/buck-pipeline@main build --src .
+```
+
+
 ## Jobs
 
 | Job       | Description   |
