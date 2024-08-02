@@ -17,11 +17,11 @@ def _go_toolchain_impl(ctx):
 
     cmd = cmd_args()
     if host_info().os.is_windows:
-        compiler_src = cmd_args(download, format = "{}\\go\\bin\\go.exe")
-        cmd.add([ctx.attrs._symlink_bat, compiler_dst.as_output(), compiler_src.relative_to(compiler_dst, parent = 1)])
+        compiler_src = cmd_args(download, format = "{}\\go\\bin\\go.exe", relative_to = (compiler_dst, 1))
+        cmd.add([ctx.attrs._symlink_bat, compiler_dst.as_output(), compiler_src])
     else:
-        compiler_src = cmd_args(download, format = "{}/go/bin/go")
-        cmd.add(["ln", "-sf", compiler_src.relative_to(compiler_dst, parent = 1), compiler_dst.as_output()])
+        compiler_src = cmd_args(download, format = "{}/go/bin/go", relative_to = (compiler_dst, 1))
+        cmd.add(["ln", "-sf", compiler_src, compiler_dst.as_output()])
 
     ctx.actions.run(cmd, category = "cp_compiler")
     return [DefaultInfo(default_output = download), GoCompilerInfo(compiler_path = compiler_dst, GOROOT = "")]
@@ -57,10 +57,16 @@ def _download_toolchain(ctx: AnalysisContext):
         script_content.append(cmd_args(output, format = "mkdir {}"))
     else:
         script_content.append(cmd_args(output, format = "mkdir -p {}"))
-    script_content.extend([
-        cmd_args(output, format = "cd {}"),
-        cmd_args(["tar", compress_flag, "-x", "-f", archive], delimiter = " ").relative_to(output),
-    ])
+    if host_info().os.is_windows:
+        script_content.extend([
+            cmd_args(output, format = "cd {}"),
+            cmd_args(["unzip", archive], delimiter = " ", relative_to = output),
+        ])
+    else:
+        script_content.extend([
+            cmd_args(output, format = "cd {}"),
+            cmd_args(["tar", compress_flag, "-x", "-f", archive], delimiter = " ", relative_to = output),
+        ])
     script, _ = ctx.actions.write(
         script_name,
         script_content,
@@ -68,18 +74,19 @@ def _download_toolchain(ctx: AnalysisContext):
         allow_args = True,
     )
 
-    if host_info().os.is_windows:
-        cmd = cmd_args([script])
-    else:
-        cmd = cmd_args(["/bin/sh", script])
+    cmd = cmd_args(
+        ([] if host_info().os.is_windows else ["/bin/sh"]) + [script],
+        hidden = [archive, output.as_output()],
+    )
 
-    ctx.actions.run(cmd.hidden([archive, output.as_output()]), category = "extract_go_toolchain")
+    ctx.actions.run(cmd, category = "extract_go_toolchain")
 
     return output
 
 def _toolchain_config():
     version = "1.20.7"
     os = host_info().os
+    arch = host_info().arch
     if os.is_windows:
         return struct(
             sha256 = "736dc6c7fcab1c96b682c8c93e38d7e371e62a17d34cb2c37d451a1147f66af9",
@@ -88,12 +95,22 @@ def _toolchain_config():
             version = version,
         )
     if os.is_macos:
-        return struct(
-            sha256 = "eea1e7e4c2f75c72629050e6a6c7c46c446d64056732a7787fb3ba16ace1982e",
-            platform = "darwin-arm64",
-            archive_extension = "tar.gz",
-            version = version,
-        )
+        if arch.is_aarch64:
+            return struct(
+                sha256 = "eea1e7e4c2f75c72629050e6a6c7c46c446d64056732a7787fb3ba16ace1982e",
+                platform = "darwin-arm64",
+                archive_extension = "tar.gz",
+                version = version,
+            )
+        elif arch.is_x86_64:
+            return struct(
+                sha256 = "785170eab380a8985d53896808b0a71336d0ea60e0a26099b4ccec77798b1cf4",
+                platform = "darwin-amd64",
+                archive_extension = "tar.gz",
+                version = version,
+            )
+        else:
+            fail("unrecognized architecture: couldn't select macOS go toolchain")
 
     # Default linux
     return struct(

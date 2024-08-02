@@ -11,7 +11,7 @@ A ready-to-use Pipeline for [Buck](https://buck2.build/) projects.
 Run the following command in your project:
 
 ```bash
-dagger run fluentci buck_pipeline
+fluentci run buck
 ```
 
 Or, if you want to use it as a template:
@@ -25,7 +25,7 @@ This will create a `.fluentci` folder in your project.
 Now you can run the pipeline with:
 
 ```bash
-dagger run fluentci .
+fluentci run .
 ```
 
 ## Jobs
@@ -40,15 +40,8 @@ dagger run fluentci .
 You can also use this pipeline programmatically:
 
 ```ts
-import Client, { connect } from "https://sdk.fluentci.io/v0.1.9/mod.ts";
-import { test, build } from "https://pkg.fluentci.io/buck_pipeline@v0.1.3/mod.ts";
+import { test, build } from "https://pkg.fluentci.io/buck_pipeline@v0.1.4/mod.ts";
 
-function pipeline(src = ".") {
-  connect(async (client: Client) => {
-    await test(client, src);
-    await build(client, src);
-  });
-}
-
-pipeline();
+await test(".");
+await build(".");
 ```
