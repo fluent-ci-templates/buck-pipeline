@@ -1,7 +1,8 @@
 # Buck Pipeline
 
-[![fluentci pipeline](https://img.shields.io/badge/dynamic/json?label=pkg.fluentci.io&labelColor=%23000&color=%23460cf1&url=https%3A%2F%2Fapi.fluentci.io%2Fv1%2Fpipeline%2Fbuck_pipeline&query=%24.version)](https://pkg.fluentci.io/buck_pipeline)
-![deno compatibility](https://shield.deno.dev/deno/^1.34)
+[![fluentci pipeline](https://shield.fluentci.io/x/buck)](https://pkg.fluentci.io/buck)
+![deno compatibility](https://shield.deno.dev/deno/^1.41)
+[![](https://jsr.io/badges/@fluentci/buck)](https://jsr.io/@fluentci/buck)
 [![](https://img.shields.io/codecov/c/gh/fluent-ci-templates/buck-pipeline)](https://codecov.io/gh/fluent-ci-templates/buck-pipeline)
 
 A ready-to-use Pipeline for [Buck](https://buck2.build/) projects.
@@ -54,7 +55,7 @@ dagger call -m github.com/fluent-ci-templates/buck-pipeline@main build --src .
 You can also use this pipeline programmatically:
 
 ```ts
-import { test, build } from "https://pkg.fluentci.io/buck_pipeline@v0.1.4/mod.ts";
+import { test, build } from "jsr:@fluentci/buck";
 
 await test(".");
 await build(".");
