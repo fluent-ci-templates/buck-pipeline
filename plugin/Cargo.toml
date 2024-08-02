@@ -1,0 +1,14 @@
+[package]
+edition = "2021"
+name = "buck"
+version = "0.1.4"
+
+[lib]
+crate-type = ["cdylib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.86"
+extism-pdk = "1.1.0"
+fluentci-pdk = "0.1.9"
