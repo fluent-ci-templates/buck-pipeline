@@ -15,14 +15,27 @@ export const build = async (
   const ctr = dag
     .pipeline(Job.build)
     .container()
-    .from("ghcr.io/fluent-ci-templates/buck:latest")
+    .from("rust:1.80-bookworm")
+    .withExec(["apt-get", "update"])
+    .withExec(["apt-get", "install", "-y", "wget", "zstd"])
+    .withExec([
+      "wget",
+      "https://github.com/facebook/buck2/releases/download/latest/buck2-x86_64-unknown-linux-gnu.zst",
+    ])
+    .withExec(["zstd", "-d", "buck2-x86_64-unknown-linux-gnu.zst"])
+    .withExec(["chmod", "+x", "buck2-x86_64-unknown-linux-gnu"])
+    .withExec(["mv", "buck2-x86_64-unknown-linux-gnu", "/usr/local/bin/buck2"])
     .withMountedCache("/app/buck-out", dag.cacheVolume("buck-cache"))
     .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
-    .withExec(["buck2", "build", "//...", "--show-output"])
+    .withExec(["buck2", "build", "//...", "--show-output", "--verbose", "4"])
     .withExec(["ls", "-la"]);
+  const [stdout, stderr] = await Promise.all([ctr.stdout(), ctr.stderr()]);
 
-  return ctr.stdout();
+  console.log(stdout);
+  console.error(stderr);
+
+  return stdout + "\n" + stderr;
 };
 
 export const test = async (
@@ -32,14 +45,28 @@ export const test = async (
   const ctr = dag
     .pipeline(Job.test)
     .container()
-    .from("ghcr.io/fluent-ci-templates/buck:latest")
+    .from("rust:1.80-bookworm")
+    .withExec(["apt-get", "update"])
+    .withExec(["apt-get", "install", "-y", "wget", "zstd"])
+    .withExec([
+      "wget",
+      "https://github.com/facebook/buck2/releases/download/latest/buck2-x86_64-unknown-linux-gnu.zst",
+    ])
+    .withExec(["zstd", "-d", "buck2-x86_64-unknown-linux-gnu.zst"])
+    .withExec(["chmod", "+x", "buck2-x86_64-unknown-linux-gnu"])
+    .withExec(["mv", "buck2-x86_64-unknown-linux-gnu", "/usr/local/bin/buck2"])
     .withMountedCache("/app/buck-out", dag.cacheVolume("buck-cache"))
     .withDirectory("/app", context, { exclude })
     .withWorkdir("/app")
     .withExec(["buck", "test", "//..."])
     .withExec(["ls", "-la"]);
 
-  return ctr.stdout();
+  const [stdout, stderr] = await Promise.all([ctr.stdout(), ctr.stderr()]);
+
+  console.log(stdout);
+  console.error(stderr);
+
+  return stdout + "\n" + stderr;
 };
 
 export type JobExec = (src: string | Directory | undefined) => Promise<string>;

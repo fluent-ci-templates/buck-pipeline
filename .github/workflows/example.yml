@@ -19,5 +19,5 @@ jobs:
         run: |
           git submodule update --init --recursive
           git submodule update --recursive --remote
-          dagger run deno run -A ../src/dagger/runner.ts
+          dagger run --progress=plain deno run -A ../src/dagger/runner.ts
         working-directory: ${{ matrix.examples }}
