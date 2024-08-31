@@ -17,11 +17,19 @@ pub fn setup_buck2(version: String) -> Result<String, Error> {
     let arch = dag().get_arch()?;
     dag().set_envs(vec![("ARCH".into(), arch)])?;
 
+    let path = dag().get_env("PATH")?;
+    let home = dag().get_env("HOME")?;
+
+    dag().set_envs(vec![(
+        "PATH".into(),
+        format!("{}/.local/bin:{}", home, path),
+    )])?;
+
     if !update.is_empty() {
         let stdout = dag().pkgx()?.with_exec(vec!["pkgx wget https://github.com/facebook/buck2/releases/download/${BUCK2_VERSION}/buck2-${ARCH}-${OS}.zst"])?
       .with_exec(vec!["pkgx unzstd buck2-${ARCH}-${OS}.zst"])?
       .with_exec(vec!["chmod +x buck2-${ARCH}-${OS}"])?
-      .with_exec(vec!["cp buck2-${ARCH}-${OS} /usr/local/bin/buck2"])?
+      .with_exec(vec!["cp buck2-${ARCH}-${OS} $HOME/.local/bin/buck2"])?
       .with_exec(vec!["rm -rf buck2-*"])?
       .stdout()?;
         return Ok(stdout);
@@ -30,7 +38,7 @@ pub fn setup_buck2(version: String) -> Result<String, Error> {
     let stdout = dag().pkgx()?.with_exec(vec!["type buck2 > /dev/null 2> /dev/null || pkgx wget https://github.com/facebook/buck2/releases/download/${BUCK2_VERSION}/buck2-${ARCH}-${OS}.zst"])?
       .with_exec(vec!["type buck2 > /dev/null 2> /dev/null || pkgx unzstd buck2-${ARCH}-${OS}.zst"])?
       .with_exec(vec!["type buck2 > /dev/null 2> /dev/null || chmod +x buck2-${ARCH}-${OS}"])?
-      .with_exec(vec!["type buck2 > /dev/null 2> /dev/null || mv buck2-${ARCH}-${OS} /usr/local/bin/buck2"])?
+      .with_exec(vec!["type buck2 > /dev/null 2> /dev/null || mv buck2-${ARCH}-${OS} $HOME/.local/bin/buck2"])?
       .with_exec(vec!["rm -rf buck2-*"])?
   .stdout()?;
 

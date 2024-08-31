@@ -5,4 +5,14 @@ authors = [
 description = "CI/CD Plugin for Buck2"
 license = "MIT"
 name = "buck"
-version = "0.1.4"
+version = "0.1.5"
+
+# Default steps for the plugin
+
+[[steps]]
+command = ["fluentci run --wasm buck test //..."]
+name = "Run tests"
+
+[[steps]]
+command = ["fluentci run --wasm buck build //..."]
+name = "Build"

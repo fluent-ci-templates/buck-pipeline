@@ -28,7 +28,7 @@ checksum = "9475866fec1451be56a3c2400fd081ff546538961565ccb5b7142cbd22bc7a51"
 
 [[package]]
 name = "buck"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "anyhow",
  "extism-pdk",
